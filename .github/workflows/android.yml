@@ -41,6 +41,7 @@ jobs:
 
   generate-app:
     name: Generate Debug App
+    needs: [test, detekt]
     runs-on: ubuntu-latest
 
     steps:
@@ -65,7 +66,6 @@ jobs:
   release:
     name: Release apk
     needs: generate-app
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
