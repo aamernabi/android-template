@@ -41,7 +41,7 @@ jobs:
 
   generate-app:
     name: Generate Debug App
-    needs: [test, detekt]
+    needs: [ test, detekt ]
     runs-on: ubuntu-latest
 
     steps:
@@ -69,6 +69,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download APK from build
+        uses: actions/download-artifact@v2
+        with:
+          name: generate-app
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
