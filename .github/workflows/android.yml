@@ -54,18 +54,29 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build Debug App
-        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Assemble Release Bundle
+          run: ./gradlew bundleRelease
+
+      - name: Sign Release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Upload App
         uses: actions/upload-artifact@v2
         with:
-          name: debug-app
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: release-bundle
+          path: app/build/outputs/bundle/release/app-release.aab
 
   release:
     name: Release apk
     needs: generate-app
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
