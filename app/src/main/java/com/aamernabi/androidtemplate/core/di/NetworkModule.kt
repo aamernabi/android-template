@@ -5,6 +5,8 @@ import com.aamernabi.androidtemplate.utils.CONNECTION_TIMEOUT
 import com.aamernabi.androidtemplate.utils.READ_TIMEOUT
 import com.aamernabi.androidtemplate.utils.WRITE_TIMEOUT
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,12 +43,30 @@ object NetworkModule {
     }
 
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+    }
+
+    @Provides
+    fun provideMoshiConverterFactory(moshi: Moshi): MoshiConverterFactory =
+        MoshiConverterFactory.create(moshi)
+
+    @Provides
+    fun provideCallAdapterFactory(): CoroutineCallAdapterFactory = CoroutineCallAdapterFactory()
+
+    @Provides
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        converterFactory: MoshiConverterFactory,
+        callAdapterFactory: CoroutineCallAdapterFactory,
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(callAdapterFactory)
             .build()
     }
 }
