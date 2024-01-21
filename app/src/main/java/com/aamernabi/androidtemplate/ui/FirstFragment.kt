@@ -1,9 +1,11 @@
 package com.aamernabi.androidtemplate.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.aamernabi.androidtemplate.BuildConfig
 import com.aamernabi.androidtemplate.R
 import com.aamernabi.androidtemplate.core.extension.viewBinding
 import com.aamernabi.androidtemplate.databinding.FragmentFirstBinding
@@ -16,6 +18,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("FirstFragment", BuildConfig.BASE_URL)
 
         binding.buttonNext.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
